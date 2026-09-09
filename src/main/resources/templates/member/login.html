@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>로그인</title>
+  <style>
+    /* 상단에서 드린 모던 CSS를 그대로 넣었습니다 */
+    body { font-family: 'Noto Sans KR', sans-serif; background-color: #f4f6f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+    .login-container { background-color: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 8px 24px rgba(149, 157, 165, 0.2); width: 100%; max-width: 400px; box-sizing: border-box; }
+    h2 { text-align: center; color: #2c3e50; margin-bottom: 32px; font-weight: 700; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; color: #34495e; font-size: 14px; font-weight: 600; }
+    .form-control { width: 100%; padding: 12px 16px; border: 1px solid #dcdde1; border-radius: 8px; font-size: 15px; box-sizing: border-box; transition: 0.3s; }
+    .form-control:focus { border-color: #3498db; outline: none; box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15); }
+    .btn-login { width: 100%; padding: 14px; background-color: #3498db; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+    .btn-login:hover { background-color: #2980b9; }
+    .error-msg { background-color: #fff5f5; color: #e74c3c; padding: 12px; border-radius: 8px; border: 1px solid #feb2b2; margin-bottom: 20px; font-size: 13px; text-align: center; }
+    .login-footer { margin-top: 24px; text-align: center; font-size: 13px; color: #7f8c8d; }
+    .login-footer a { color: #3498db; text-decoration: none; font-weight: 600; }
+  </style>
+</head>
+
+<body>
+  <div class="login-container">
+    <h2>🔑 커스텀 로그인</h2>
+
+    <div th:if="${param.error}" class="error-msg">
+      아이디 또는 비밀번호가 올바르지 않습니다.
+    </div>
+
+    <form th:action="@{/member/login}" method="post">
+      <div class="form-group">
+        <label>아이디</label>
+        <input type="text" name="username" class="form-control" required placeholder="아이디를 입력하세요">
+      </div>
+      
+      <div class="form-group">
+        <label>비밀번호</label>
+        <input type="password" name="password" class="form-control" required placeholder="비밀번호를 입력하세요">
+      </div>
+      
+      <button type="submit" class="btn-login">로그인</button>
+      
+      <div class="login-footer">
+        계정이 없으신가요? <a th:href="@{/member/join}">회원가입</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>
