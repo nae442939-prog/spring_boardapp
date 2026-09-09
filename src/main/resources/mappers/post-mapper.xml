@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 이 .xml 파일을 호출하는 매퍼 (PostMapper)를 정의한다-->
+<mapper namespace="com.example.boardapp.mapper.PostMapper">
+
+<!-- resultMap : 쿼리의 결과 (result) 를 객체와 매핑(Mapping) 하는 방법을 정의 
+resultMap을 활용해 객체간 연관관계를 정의 할 수 있다
+(데이터 베이스에서 수행한 조인은 객체 간 연관관계를 의미함)
+type: 매핑되는 객체의 타입
+-->
+<resultMap id="postResultMap" type  ="com.example.boardapp.domain.Post">
+<!-- post _ id 컬럼을 id속성에 매핑한다-->
+<id property="id" column="post_id" />
+<!-- title 컬럼을 title 속성에 매핑한다 -->
+<result property = "title" column="title"/>
+<!-- content 컬럼을 content 속성에 매핑한다-->
+<result property = "content" column="content"/>
+
+<!-- 연관관계 (association) 를 처리하는 부분
+post 의 member_id (외래키) 를 Member 객체에 매핑하는 과정 
+javaType : 이 객체(Post)와 연관된 객체의 자료형. Member
+-->
+<association property = "member" javaType="com.example.boardapp.domain.Member">
+<!-- member_id 컬럼과 id 속성에 매핑-->
+<id property= "id" column = "member_id" />
+<!-- username 컬럼과 username 속성에 매핑-->
+<result property= "username" column="username" />
+ </association>
+</resultMap>
+
+<!-- 
+findAll: DB로 부터 모든 게시물 조회한다 예)  게시물 목록 페이지
+resultMap : 이 쿼리의 결과를 postResultMap 에게 전달
+postResult: 데이터 베이스에서 가져온 순수한 데이터 (객체 아님)
+JOIN 과 INNER JOIN 은 같습니다 (OUTER JOIN 도 있음 )
+ -->
+<select id = "findAll" resultMap = "postResultMap">
+SELECT p.id AS post_id, p.title, p.content, m.id AS member_id, m.username  
+<!-- p.member_id = m.id : 게시물 작성자를 구하는 부분 -->
+FROM post p INNER JOIN member m ON p.member_id = m.id   
+<!-- 게시물은 id 순으로 내림 차순 정렬 -->
+ORDER BY p.id DESC
+
+</select>
+
+
+<!-- 
+findById: 입력받는 id에 해당하는 게시물을 찾는다
+매개변수 타입이 long (int 보다 더 큰 자료형 ) 데이터 베이스의 BIGINT 랑 대응한다 
+게시물의 개수가 커지는 경우를 생각해서 long 타입을 사용한다
+조인하는 이유: 게시물과 게시물의 작성자를 같이 보고 싶을때 (대부분)
+-->
+<select id = "findById" parameterType = "long" resultMap="postResultMap">
+SELECT p.id AS post_id, p.title, p.content , m.id AS member_id, m.username 
+FROM post p INNER JOIN member m ON p.member_id = m.id 
+WHERE p.id = #{id}
+</select>
+
+<!--
+ save: 게시물을 DB에 저장하는 메서드 
+  -->
+<insert id = "save" parameterType = "com.example.boardapp.domain.Post" useGeneratedKeys="true"
+keyProperty="id">
+INSERT INTO post (title , content , member_id)
+VALUES (#{title}, #{content}, #{member.id})
+</insert>
+
+<!-- delete: 입력받는 id에 해당하는 게시물을 삭제한다  -->
+<delete id = "delete" parameterType="long">
+DELETE FROM post WHERE id = #{id} 
+</delete>
+
+
+</mapper>

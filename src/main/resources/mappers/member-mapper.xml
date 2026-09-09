@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 이 .xml 파일을 호출 할 매퍼 (MemberMapper)의 위치 -->
+<mapper namespace="com.example.boardapp.mapper.MemberMapper">
+  
+  <!-- save 메서드 내부의 SQL 을 정의한다
+  id 는 메서드의 이름이 된다
+  parameterType: 매개변수 (parameter)의 자료형. Member
+  userGenrateKeys : 객체를 DB에 저장 할때 생성한 id를 반환해라 
+  KeyProperty=id: id 를 객체의 id 필드에 할당해라 
+  member 객체를 생성했을 때 (DB 저장 전)
+  언제 쓰는지 ? 객체를 DB에 저장 한 직후 id 필드가 필요한 경우 (예 . 게시물 상세 페이지 이동)
+   -->
+  
+  <!-- save 메서드: 사용자 생성 (회원가입 할때 등 )에 사용되는 메서드-->
+  <insert id="save" parameterType="com.example.boardapp.domain.Member" useGeneratedKeys="true"
+  keyProperty="id">
+  <!-- SQL INSERT문 -->
+  INSERT INTO member (username, password)
+  VALUES (#{username}, #{password})
+  </insert>         
+  <!--save (member) => 이 객체의 데이터를 데이터 베이스에 저장한다-->
+
+  <!-- findByUsername 메서드 내부의 SQL 을 정의한다
+  parameterType (매개변수 자료형 ): String
+  resultType(반환 자료형 ): Member
+  -->
+  <!-- fingByUsername: 사용자 이름 (username)으로 사용자를 조회-->
+  <select id="findByUsername" parameterType="String" resultType="com.example.boardapp.domain.Member">
+
+  SELECT id, username, password FROM member
+  WHERE username = #{ username }
+  </select>
+  <!--fingByUsername("johndoe") => 데이터베이스에서 johndoe를 찾아줌 -->
+
+  </mapper>                    
